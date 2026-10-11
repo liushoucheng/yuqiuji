@@ -1,4 +1,4 @@
-// 本机使用 Node 自带 SQLite，接口保持与线上 D1 一致。
+// Node 服务器使用自带 SQLite，接口保持与 Worker 的 D1 一致。
 import { DatabaseSync } from 'node:sqlite';
 import { readFileSync } from 'node:fs';
 export function openDatabase(path = ':memory:') {

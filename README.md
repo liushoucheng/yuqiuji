@@ -37,7 +37,26 @@ GitHub Pages 体验页使用 `docs/`，由 `npm run build:pages` 生成。体验
 
 后端从 HttpOnly Cookie 验证随机身份，服务端审核成员权限；客户端提交的管理员标志和球员身份不会作为授权依据。文档版本阻止并发覆盖，提交标识避免网络重试新增重复比赛。
 
-GitHub Pages 只能托管静态页面，不能直接运行这个共享后端。共享版需要单独云环境，或由云平台从此 GitHub 仓库部署整个应用。当前正在确认共享版部署平台。
+GitHub Pages 只能托管静态页面，不能直接运行这个共享后端。共享版也可部署到独立 Linux 服务器，使用相同业务代码和 Node 自带 SQLite。
+
+## 阿里云服务器运行
+
+服务器需要 Node.js 22.16+。不需要 npm install。先执行 `npm test`，再运行：
+
+```sh
+HOST=127.0.0.1 PORT=8081 \
+PUBLIC_ORIGIN=https://你的域名:8443 \
+DATABASE_PATH=/持久数据目录/web.sqlite \
+TRUST_PROXY=1 npm start
+```
+
+`PUBLIC_ORIGIN` 必须与用户访问的完整网址一致，含协议和非默认端口；不能取客户端 Host 或转发头。`TRUST_PROXY=1` 只允许监听本机，并由 HTTPS 代理设置真实来源 IP。请求超过64KB会在缓冲时拒绝。
+
+`deploy/` 中提供针对当前韩国服务器的 systemd 和 Caddy 配置：应用监听 `127.0.0.1:8081`，网页 HTTPS 使用8443；80仅供证书验证和跳转，现有VPN的443不改动。临时网址为 `https://yuqiuji-8-220-213-28.sslip.io:8443/`，配置准备不代表已部署可用。
+
+应用位于 `/opt/yuqiuji/app`，运行环境位于 `/opt/yuqiuji/runtime`；SQLite 数据持久保存在 `/var/lib/yuqiuji/web.sqlite`，证书保存在 `/var/lib/yuqiuji-caddy`，都不进入源码仓库。两个服务通过 systemd 自动启动，以独立动态用户运行。首次新数据库自动应用 `drizzle/0000_court.sql`；已有数据库和身份在重启后保留。
+
+上线前需放行阿里云安全组TCP80、8443，并完成可信证书和外网访问验证。首次创建真实战绩簿的浏览器成为管理员，应自行保存个人登录码。
 
 服务器在读取或修改时结算已到24小时期限的比赛；没有独立后台定时任务。最多100位球友、150个身份、500场比赛及800KB战绩文档，达到容量时拒绝新写入，保留历史。
 

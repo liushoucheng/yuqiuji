@@ -1,0 +1,15 @@
+{
+	admin off
+	https_port 8443
+}
+
+https://yuqiuji-8-220-213-28.sslip.io:8443 {
+	tls {
+		issuer acme {
+			disable_tlsalpn_challenge
+		}
+	}
+	reverse_proxy 127.0.0.1:8081 {
+		header_up X-Real-IP {remote_host}
+	}
+}

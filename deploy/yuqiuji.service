@@ -1,0 +1,25 @@
+[Unit]
+Description=Yuqiuji shared badminton records
+After=network.target
+
+[Service]
+DynamicUser=yes
+StateDirectory=yuqiuji
+StateDirectoryMode=0700
+WorkingDirectory=/opt/yuqiuji/app
+Environment=HOST=127.0.0.1
+Environment=PORT=8081
+Environment=PUBLIC_ORIGIN=https://yuqiuji-8-220-213-28.sslip.io:8443
+Environment=DATABASE_PATH=/var/lib/yuqiuji/web.sqlite
+Environment=TRUST_PROXY=1
+ExecStart=/opt/yuqiuji/runtime/node/bin/node scripts/web-preview.mjs
+Restart=on-failure
+RestartSec=3
+UMask=0077
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+
+[Install]
+WantedBy=multi-user.target

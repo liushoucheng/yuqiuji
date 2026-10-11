@@ -5,7 +5,9 @@
   "scripts": {
     "build:pages": "node scripts/build-pages.mjs",
     "build": "node scripts/build-web.mjs",
-    "test": "node scripts/build-web.mjs && node scripts/web-smoke.mjs",
-    "dev": "node scripts/build-web.mjs && node scripts/web-preview.mjs"
+    "test": "node scripts/build-web.mjs && node scripts/web-smoke.mjs && node scripts/web-http-smoke.mjs",
+    "test:http": "node scripts/web-http-smoke.mjs",
+    "dev": "node scripts/build-web.mjs && node scripts/web-preview.mjs",
+    "start": "node scripts/web-preview.mjs"
   }
 }
