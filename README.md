@@ -23,7 +23,13 @@ npm run dev
 
 打开 `http://127.0.0.1:4174/`。本机数据库保存在 `.local/web.sqlite`，不进入 Git 仓库。
 
-## 托管
+## 公网体验页
+
+GitHub Pages 体验页使用 `docs/`，由 `npm run build:pages` 生成。体验页数据仅保存在当前浏览器，默认球友和历史比赛均为虚构；在「我的」中切换体验身份可模拟对方确认。它不能用于群成员之间自动同步，页面顶部始终显示这个限制。
+
+共享版仍使用 `site/` 中的服务端实现，以下说明针对共享版。
+
+## 共享版托管
 
 `npm run build` 生成 `dist/server/index.js`，是包含所有页面资源的 Cloudflare Worker ESM，默认导出 `fetch`。需要名为 `DB` 的 D1 绑定。首次部署前通过平台迁移工具执行 `drizzle/0000_court.sql`；不要在请求处理时创建表。
 
