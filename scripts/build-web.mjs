@@ -1,0 +1,18 @@
+import { readFile, writeFile, mkdir, cp } from 'node:fs/promises';
+import assert from 'node:assert/strict';
+const root = new URL('../', import.meta.url);
+const read = path => readFile(new URL(path, root), 'utf8');
+const [domain, worker, html, app, styles] = await Promise.all(['miniprogram/lib/domain.js', 'site/worker.mjs', 'site/index.html', 'site/app.js', 'miniprogram/app.wxss'].map(read));
+const manifest = JSON.stringify({ d1: 'DB', r2: null });
+const css = styles.replace(/([\d.]+)rpx/g, (_, n) => Number(n) / 2 + 'px').replace(/\bpage\b/g, '.screen').replace(/view, text, button, input/g, 'div, span, button, input').replace(/>view/g, '>div');
+const assets = Object.fromEntries([['/', html, 'text/html'], ['/app.js', app, 'text/javascript'], ['/domain.js', domain, 'text/javascript'], ['/app.css', css, 'text/css']].map(([path, body, type]) => [path, { body, type: type + '; charset=utf-8' }]));
+const source = `const D = (() => { const module = {exports:{}};\n${domain}\nreturn module.exports; })();\nconst ASSETS = ${JSON.stringify(assets)};\n${worker}`;
+const loaded = await import('data:text/javascript;base64,' + Buffer.from(source).toString('base64'));
+assert.equal(typeof loaded.default.fetch, 'function');
+JSON.parse(manifest);
+await mkdir(new URL('dist/server/', root), { recursive: true });
+await mkdir(new URL('dist/.openai/', root), { recursive: true });
+await writeFile(new URL('dist/server/index.js', root), source);
+await writeFile(new URL('dist/.openai/hosting.json', root), manifest);
+await cp(new URL('drizzle/', root), new URL('dist/.openai/drizzle/', root), { recursive: true });
+console.log('网页 Worker 构建通过；含共享规则、页面和数据库迁移。');

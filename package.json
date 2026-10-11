@@ -1,0 +1,10 @@
+{
+  "name": "yuqiuji-web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/build-web.mjs",
+    "test": "node scripts/build-web.mjs && node scripts/web-smoke.mjs",
+    "dev": "node scripts/build-web.mjs && node scripts/web-preview.mjs"
+  }
+}
