@@ -52,7 +52,7 @@ TRUST_PROXY=1 npm start
 
 `PUBLIC_ORIGIN` 必须与用户访问的完整网址一致，含协议和非默认端口；不能取客户端 Host 或转发头。`TRUST_PROXY=1` 只允许监听本机，并由 HTTPS 代理设置真实来源 IP。请求超过64KB会在缓冲时拒绝。
 
-`deploy/` 中提供针对当前韩国服务器的 systemd 和 Caddy 配置：应用监听 `127.0.0.1:8081`，网页 HTTPS 使用8443；80仅供证书验证和跳转，现有VPN的443不改动。临时网址为 `https://yuqiuji-8-220-213-28.sslip.io:8443/`，配置准备不代表已部署可用。
+`deploy/` 中提供针对当前韩国服务器的 systemd 和 Caddy 配置：应用监听 `127.0.0.1:8081`，网页 HTTPS 使用8443；80仅供证书验证和跳转，现有VPN的443不改动。临时网址为 `https://yuqiuji-8-220-213-28.sslip.io:8443/`。2026-10-12已安装Node22.23.3与Caddy2.11.7，两个服务均启用；服务器侧的共享流程、数据重启保存和可信HTTPS证书通过。当前8443外网连接仍未通过，待确认阿里云入站规则后再验证公网可用性。
 
 应用位于 `/opt/yuqiuji/app`，运行环境位于 `/opt/yuqiuji/runtime`；SQLite 数据持久保存在 `/var/lib/yuqiuji/web.sqlite`，证书保存在 `/var/lib/yuqiuji-caddy`，都不进入源码仓库。两个服务通过 systemd 自动启动，以独立动态用户运行。首次新数据库自动应用 `drizzle/0000_court.sql`；已有数据库和身份在重启后保留。
 
